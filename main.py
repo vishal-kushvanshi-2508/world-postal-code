@@ -21,7 +21,7 @@ def main():
 
     # fetch book url data
     country_data_list = fetch_country_table_data()
-    print(country_data_list)
+    print(len(country_data_list))
 
     # # print(book_data_list)
 

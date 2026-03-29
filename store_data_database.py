@@ -37,7 +37,6 @@ def create_db():
 # create_db()
 
 
-
 def create_table_country_url():
     connection = get_connection()
     cursor = connection.cursor()
@@ -82,6 +81,8 @@ def data_commit_batches_wise(connection, cursor, sql_query : str, sql_query_valu
 def country_url_insert(list_data : list):
     connection = get_connection()
     cursor = connection.cursor()
+    if not list_data:
+        return
     dict_data = list_data[0]
     columns = ", ".join(list(dict_data.keys()))
     values = "".join([len(dict_data.keys()) * '%s,']).strip(',')
@@ -123,12 +124,14 @@ def country_url_insert(list_data : list):
         connection.close()
 
 
-
-
 def fetch_country_table_data():
     connection = get_connection()
     cursor = connection.cursor()
     query = f"SELECT id, country_name, country_url, status FROM {country_url_table_name} WHERE status = 'pending';"
+    # query = f"SELECT id, country_name, country_url, status FROM {country_url_table_name} WHERE country_name = 'dominican-republic';"
+    # query = f"SELECT id, country_name, country_url, status FROM {country_url_table_name} WHERE country_name = 'bahamas';"
+    # query = f"SELECT id, country_name, country_url, status FROM {country_url_table_name} WHERE country_name = 'barbados' and status = 'pending';"
+    # query = f"SELECT id, country_name, country_url, status FROM {country_url_table_name} WHERE (country_name = 'canada' or country_name = 'barbados')  and status = 'pending';"
     cursor.execute(query)
 
     rows = cursor.fetchall()
@@ -149,20 +152,21 @@ def fetch_country_table_data():
     return result
 
 
+### update country url status ..
 
-
-
-
-### update book status..
-
-def update_book_url_status(book_id):
+def update_country_url_status(country_id):
     connection = get_connection()
     cursor = connection.cursor()
-    sql_query = f"UPDATE {country_url_table_name} SET status = 'success' WHERE id = {book_id};"
+    sql_query = f"UPDATE {country_url_table_name} SET status = 'success' WHERE id = {country_id};"
     cursor.execute(sql_query)
     connection.commit()
     cursor.close()
     connection.close()
+
+
+
+
+
 
 
 
@@ -206,34 +210,36 @@ def create_table_region():
 def region_data_insert(list_data : list):
     connection = get_connection()
     cursor = connection.cursor()
+    if not list_data:
+        return
     dict_data = list_data[0]
     columns = ", ".join(list(dict_data.keys()))
     values = "".join([len(dict_data.keys()) * '%s,']).strip(',')
     parent_sql = f"""INSERT INTO {region_table_name} ({columns}) VALUES ({values})"""
     try:
-        cursor.execute(f"SELECT COUNT(*) FROM {region_table_name}")
-        total_contry_rows = cursor.fetchone()[0]
-        print("total table recodes : ", total_contry_rows)
-        if total_contry_rows == 0:
-            # if table is empty then inset data in table.
+        # cursor.execute(f"SELECT COUNT(*) FROM {region_table_name}")
+        # total_contry_rows = cursor.fetchone()[0]
+        # print("total table recodes : ", total_contry_rows)
+        # if total_contry_rows == 0:
+        #     # if table is empty then inset data in table.
 
-            product_values = []
-            for dict_data in list_data:
-                product_values.append( (
-                    dict_data.get("country_name"),
-                    dict_data.get("region_name"),
-                    dict_data.get("region_url"),
-                    dict_data.get("status")
-                ))
+        product_values = []
+        for dict_data in list_data:
+            product_values.append( (
+                dict_data.get("country_name"),
+                dict_data.get("region_name"),
+                dict_data.get("region_url"),
+                dict_data.get("status")
+            ))
 
-            try:
-                batch_count = data_commit_batches_wise(connection, cursor, parent_sql, product_values)
-                print(f"Parent batches executed count={batch_count}")
-            except Exception as e:
-                print(f"batch can not. Error : {e} ")
+        try:
+            batch_count = data_commit_batches_wise(connection, cursor, parent_sql, product_values)
+            print(f"Parent batches executed count={batch_count}")
+        except Exception as e:
+            print(f"batch can not. Error : {e} ")
 
-        else:
-            print(f"not {region_table_name} table in data inserted ..")
+        # else:
+        #     print(f"not {region_table_name} table in data inserted ..")
         cursor.close()
         connection.close()
 
@@ -253,7 +259,8 @@ def region_data_insert(list_data : list):
 def fetch_region_table_data():
     connection = get_connection()
     cursor = connection.cursor()
-    query = f"SELECT * FROM {region_table_name} WHERE status = 'pending';"
+    query = f"SELECT * FROM {region_table_name} WHERE status = 'pending';" 
+    # query = f"SELECT * FROM {region_table_name} WHERE region_name = 'alberta' and status = 'pending';"
     cursor.execute(query)
 
     rows = cursor.fetchall()
@@ -274,6 +281,17 @@ def fetch_region_table_data():
     connection.close()
     return result
 
+
+### update country url status ..
+
+def update_region_status(region_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    sql_query = f"UPDATE {region_table_name} SET status = 'success' WHERE id = {region_id};"
+    cursor.execute(sql_query)
+    connection.commit()
+    cursor.close()
+    connection.close()
 
 
 
@@ -322,35 +340,37 @@ def create_table_area():
 def area_data_insert(list_data : list):
     connection = get_connection()
     cursor = connection.cursor()
+    if not list_data:
+        return
     dict_data = list_data[0]
     columns = ", ".join(list(dict_data.keys()))
     values = "".join([len(dict_data.keys()) * '%s,']).strip(',')
     parent_sql = f"""INSERT INTO {area_table_name} ({columns}) VALUES ({values})"""
     try:
-        cursor.execute(f"SELECT COUNT(*) FROM {area_table_name}")
-        total_contry_rows = cursor.fetchone()[0]
-        print("total table recodes : ", total_contry_rows)
-        if total_contry_rows == 0:
-            # if table is empty then inset data in table.
+        # cursor.execute(f"SELECT COUNT(*) FROM {area_table_name}")
+        # total_contry_rows = cursor.fetchone()[0]
+        # print("total table recodes : ", total_contry_rows)
+        # if total_contry_rows == 0:
+        #     # if table is empty then inset data in table.
 
-            product_values = []
-            for dict_data in list_data:
-                product_values.append( (
-                    dict_data.get("country_name"),
-                    dict_data.get("region_name"),
-                    dict_data.get("area_name"),
-                    dict_data.get("area_url"),
-                    dict_data.get("status")
-                ))
+        product_values = []
+        for dict_data in list_data:
+            product_values.append( (
+                dict_data.get("country_name"),
+                dict_data.get("region_name"),
+                dict_data.get("area_name"),
+                dict_data.get("area_url"),
+                dict_data.get("status")
+            ))
 
-            try:
-                batch_count = data_commit_batches_wise(connection, cursor, parent_sql, product_values)
-                print(f"Parent batches executed count={batch_count}")
-            except Exception as e:
-                print(f"batch can not. Error : {e} ")
+        try:
+            batch_count = data_commit_batches_wise(connection, cursor, parent_sql, product_values)
+            print(f"Parent batches executed count={batch_count}")
+        except Exception as e:
+            print(f"batch can not. Error : {e} ")
 
-        else:
-            print(f"not {area_table_name} table in data inserted ..")
+        # else:
+        #     print(f"not {area_table_name} table in data inserted ..")
         cursor.close()
         connection.close()
 
@@ -392,6 +412,17 @@ def fetch_area_table_data():
     connection.close()
     return result
 
+
+### update country url status ..
+
+def update_area_status(area_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    sql_query = f"UPDATE {area_table_name} SET status = 'success' WHERE id = {area_id};"
+    cursor.execute(sql_query)
+    connection.commit()
+    cursor.close()
+    connection.close()
 
 
 
@@ -441,6 +472,9 @@ def create_table_postal():
 def postal_data_insert(list_data : list):
     connection = get_connection()
     cursor = connection.cursor()
+    # print("posta_data instet : ", list_data)
+    if not list_data:
+        return
     dict_data = list_data[0]
     columns = ", ".join(list(dict_data.keys()))
     values = "".join([len(dict_data.keys()) * '%s,']).strip(',')
