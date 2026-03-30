@@ -21,13 +21,7 @@ def main():
 
     # fetch book url data
     country_data_list = fetch_country_table_data()
-    print(len(country_data_list))
 
-    # # print(book_data_list)
-
-    # # create table for product.    
-    # create_table_product()
-    
     # create table region
     create_table_region()
 
@@ -35,10 +29,9 @@ def main():
 
     create_table_postal()
 
-    fetch_region_data(country_data_list, base_url)
+    # fetch_region_data(country_data_list, base_url)
 
-    # # create html file and extract pages data.
-    # create_html_files(book_data_list)
+    run_threaded_fetch(country_data_list, base_url, max_threads=5)
 
 
 if __name__ == "__main__":
